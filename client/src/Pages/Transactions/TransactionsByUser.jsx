@@ -29,6 +29,7 @@ const TransactionsByUser = () => {
   const [name, setName] = useState("");
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const [issuedTo, setIssuedTo] = useState();
   const [bookIssuedData, setBookIssuedData] = useState();
   const [currentPage, setCurrentPage] = useState(1); // Pagination
@@ -48,21 +49,22 @@ const TransactionsByUser = () => {
 
   const fetchBooksIssued = async (userId, page = 1) => {
     try {
+      setLoading2(true);
       const { booksIssued, currentPage, totalPages } =
         await fetchBooksIssuedApi({ userId, page });
       setBookIssuedData(booksIssued);
       setCurrentPage(currentPage);
       setTotalPages(totalPages);
-      setLoading(false);
     } catch (err) {
-      setLoading(false);
+    } finally {
+      setLoading2(false);
     }
   };
 
   const onNameChange = async (e) => {
     setName(e.target.value);
     setBookIssuedData();
-    if (name.length > 1) await fetchUsers();
+    if (e.target.value.length > 2) await fetchUsers();
   };
 
   const fetchBookByUser = async (userId) => {
@@ -91,7 +93,7 @@ const TransactionsByUser = () => {
           label="Search Name Here"
           variant="outlined"
           value={name}
-          disabled={loading}
+          disabled={loading || loading2}
           onChange={onNameChange}
         />
         {loading ? (
@@ -124,7 +126,7 @@ const TransactionsByUser = () => {
       </FlexBetween>
       <Divider />
       <FlexBetween flexDirection={"column"}>
-        {loading ? (
+        {loading2 ? (
           <Loading />
         ) : bookIssuedData ? (
           bookIssuedData.length === 0 ? (
@@ -134,7 +136,7 @@ const TransactionsByUser = () => {
               {bookIssuedData.map((m) => (
                 <BookDataCard
                   key={m.bookId}
-                  loading={loading}
+                  loading={loading2}
                   setLoading={setLoading}
                   fetchBookByUser={fetchBookByUser}
                   userId={issuedTo}
@@ -158,13 +160,7 @@ const TransactionsByUser = () => {
   );
 };
 
-const BookDataCard = ({
-  book,
-  userId,
-  loading,
-  setLoading,
-  fetchBookByUser,
-}) => {
+const BookDataCard = ({ book, userId, setLoading, fetchBookByUser }) => {
   const { bookId, bookName, issuedAt, returnedAt } = book;
   const [open, setOpen] = useState(false); // State to handle dialog open/close
 
@@ -205,8 +201,10 @@ const BookDataCard = ({
   };
   // Handle confirming the return
   const handleConfirmReturn = async () => {
+    setLoading(true);
     returnBook(bookId, userId);
     handleClose();
+    setLoading(false);
   };
 
   return (
