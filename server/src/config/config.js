@@ -15,7 +15,6 @@ export default {
     },
     protocol: process.env.PROTOCOL || 'http',
     port: process.env.APP_PORT || 5000,
-    app_base_url: process.env.APP_BASE_URL || 'http://localhost:5001/api/v1',
     node_env: process.env.NODE_ENV || 'development',
     origin_url_list: process.env.ORIGIN_URL_LIST || '[ "http://localhost:3000" ]',
     jwt_secret: process.env.JWT_SECRET,
