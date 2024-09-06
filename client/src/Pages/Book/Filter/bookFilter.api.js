@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Function to fetch book categories
 export const fetchCategories = async ({ dispatch }) => {
-    console.log(process.env.REACT_APP_SERVER_API);
+
     try {
         const config = {
             method: "get",
@@ -13,9 +13,10 @@ export const fetchCategories = async ({ dispatch }) => {
             },
         };
         const response = await axios.request(config);
+
         dispatch(
             setBookCategory({
-                bookCategory: response.data.categories,
+                bookCategory: response.data.data.categories,
             })
         );
     } catch (error) {
