@@ -9,10 +9,11 @@ const MESSAGES = {
     2004: "Invalid date range",
     2005: "Book returned",
     2006: "Rent calculated success",
-    2007:"Transaction data retrived",
+    2007: "Transaction data retrived",
     // Book
     3001: "Book not found",
-
+    3002: "books data retrived successfully",
+    3003: "books categories retrived successfully",
     // General error message
     9999: 'Internal Server Error',
 };

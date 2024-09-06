@@ -33,7 +33,7 @@ export const searchBooks = async (req, res) => {
 
         const paginatedResponse = getRecursivePaginatedResponse(books, page, limit, totalBooks);
 
-        return RESPONSE.success(res, 1001, { ...paginatedResponse });
+        return RESPONSE.success(res, 3002, { ...paginatedResponse });
     } catch (error) {
         console.error('Error searching books:', error);
         return RESPONSE.error(res, 9999, 500, error);
@@ -43,9 +43,9 @@ export const searchBooks = async (req, res) => {
 export const getDistinctCategories = async (req, res) => {
     try {
         const distinctCategories = await Books.distinct("category");
-        return res.status(200).json({ categories: distinctCategories });
+        return RESPONSE.success(res, 3003, { categories: distinctCategories });
     } catch (error) {
         console.error('Error fetching distinct categories:', error);
-        return res.status(500).json({ message: "Internal Server Error" });
+        return RESPONSE.error(res, 9999, 500, error);
     }
 };
