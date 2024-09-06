@@ -42,7 +42,7 @@ const ApplyFilter = ({ setBooksData, setLoading, booksData, loading }) => {
   };
   useEffect(() => {
     setLoading(true);
-    if (categories == null) fetchCategories({ dispatch });
+    fetchCategories({ dispatch });
     !booksData && fetchFilteredBooks();
     setLoading(false);
   }, []);
