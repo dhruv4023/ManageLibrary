@@ -150,7 +150,9 @@ const TransactionsByDateRange = () => {
                     {booksIssued.map((book) => (
                       <ListItem key={book.bookId}>
                         <ListItemText
-                          primary={book.bookName}
+                          primary={
+                            book.bookName + " issued to " + book.fullName
+                          }
                           secondary={
                             `Issued on: ${new Date(
                               book.issuedAt
