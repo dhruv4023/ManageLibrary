@@ -14,7 +14,7 @@ const Transactions = () => {
         <>
           <MyButton
             onclickHandle={() => navigate("/")}
-            label={"Transactions Filter"}
+            label={"Books Filter"}
           />
           <TransactionsByUser />
         </>

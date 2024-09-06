@@ -11,7 +11,7 @@ app.use(express.json()); // Parse JSON request bodies
 app.use(helmet()); // Enhance security by setting various HTTP headers
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" })); // Configure CORS policy
 app.use(morgan("common")); // Log HTTP requests
-app.use(cors({ origin: JSON.parse(config.origin_url_list) })); // Configure CORS for allowed origins
+app.use(cors({ origin: JSON.parse(config.origin_url_list), credentials: true })); // Configure CORS for allowed origins
 
 
 app.get("/", (req, res) => {
