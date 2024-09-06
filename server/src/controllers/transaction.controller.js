@@ -87,6 +87,7 @@ export const getBooksIssuedInRange = async (req, res) => {
     try {
         const start = new Date(startDate);
         const end = new Date(endDate);
+        end.setDate(end.getDate() + 1);
 
         if (isNaN(start.getTime()) || isNaN(end.getTime())) {
             return RESPONSE.error(res, 2004, 400);
