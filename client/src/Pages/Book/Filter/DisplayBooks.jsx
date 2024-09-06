@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import Loading from "../../../Components/Loading/Loading";
 import BookCard from "./BookCard";
@@ -6,6 +6,8 @@ import FlexBetween from "../../../Components/FlexBetween";
 import { InfoOutlined } from "@mui/icons-material";
 
 const DisplayBooks = ({ booksData, loading }) => {
+  useEffect(() => {}, [loading]);
+
   return (
     <FlexBetween
       flexDirection={"column"}
@@ -14,7 +16,7 @@ const DisplayBooks = ({ booksData, loading }) => {
       width={"100%"}
       gap={1}
     >
-      {loading ? (
+      {loading && !booksData ? (
         <Loading />
       ) : booksData ? (
         <>

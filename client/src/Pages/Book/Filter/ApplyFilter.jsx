@@ -14,6 +14,7 @@ import FlexBetween from "../../../Components/FlexBetween";
 import MyTitle from "../../../Components/MyCompoenents/MyTitle";
 import { fetchCategories, fetchFilteredBooksApi } from "./bookFilter.api";
 import { InfoOutlined } from "@mui/icons-material";
+import Loading from "../../../Components/Loading/Loading";
 
 const initialFilter = {
   name: null,
@@ -24,11 +25,12 @@ const initialFilter = {
 
 const ApplyFilter = ({ setBooksData, setLoading, booksData, loading }) => {
   const [filter, setFilter] = useState(initialFilter);
-  const [pageMetadata, setPageMetadata] = useState({});
+  const [pageMetadata, setPageMetadata] = useState();
   const dispatch = useDispatch();
   const categories = useSelector((s) => s.bookCategory);
 
   const fetchFilteredBooks = async (page = 1) => {
+    setLoading(true);
     try {
       const { page_data, page_metadata } = await fetchFilteredBooksApi({
         filter,
@@ -39,13 +41,13 @@ const ApplyFilter = ({ setBooksData, setLoading, booksData, loading }) => {
       setPageMetadata(page_metadata);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
-    setLoading(true);
     fetchCategories({ dispatch });
     !booksData && fetchFilteredBooks();
-    setLoading(false);
   }, []);
 
   const handleInputChange = (e) => {
