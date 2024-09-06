@@ -1,10 +1,10 @@
 import axios from "axios";
 
 // Function to fetch transactions within a specific date range and page
-export const handleFetchTransactionsApi = async ({ currentPage, startDate, endDate }) => {
+export const handleFetchTransactionsApi = async ({ currentPage, startDate, endDate, notreturned }) => {
     try {
         const response = await axios.get(
-            `${process.env.REACT_APP_SERVER_API}/transaction/books-issued-range?startDate=${startDate}&endDate=${endDate}&page=${currentPage}&limit=10`
+            `${process.env.REACT_APP_SERVER_API}/transaction/books-issued-range?startDate=${startDate}&endDate=${endDate}&page=${currentPage}&limit=10&notreturned=${notreturned}`
         );
         return {
             page_data: response.data.data.page_data,
@@ -16,7 +16,7 @@ export const handleFetchTransactionsApi = async ({ currentPage, startDate, endDa
 };
 
 // Function to fetch books issued to a specific user by their ID
-export const fetchBooksIssuedApi = async ({ userId, page }) => {
+export const fetchBooksIssuedByUserApi = async ({ userId, page }) => {
     try {
         let config = {
             method: "get",

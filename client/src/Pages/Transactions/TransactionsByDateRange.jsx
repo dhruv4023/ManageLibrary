@@ -9,11 +9,16 @@ import {
   Alert,
   Box,
   Pagination,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Divider,
 } from "@mui/material";
 import WidgetWrapper from "../../Components/WidgetWrapper";
 import { handleFetchTransactionsApi } from "./transactions.api";
 import Loading from "../../Components/Loading/Loading";
-import { InfoOutlined, InfoRounded, Warning } from "@mui/icons-material";
+import { InfoOutlined, InfoRounded } from "@mui/icons-material";
 
 const TransactionsByDateRange = () => {
   const [startDate, setStartDate] = useState("");
@@ -23,6 +28,8 @@ const TransactionsByDateRange = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [notreturned, setNotreturned] = useState(false);
+
   const handleFetchTransactions = async (currentPage = 1) => {
     setLoading(true);
     try {
@@ -30,6 +37,7 @@ const TransactionsByDateRange = () => {
         currentPage,
         startDate,
         endDate,
+        notreturned,
       });
       setBooksIssued(page_data);
       setTotalPages(total_page);
@@ -46,13 +54,17 @@ const TransactionsByDateRange = () => {
     handleFetchTransactions(value);
   };
 
+  const handleNotReturnedChange = (event) => {
+    setNotreturned(event.target.value === "true");
+  };
+
   return (
     <WidgetWrapper maxWidth="md">
       <Typography variant="h4" gutterBottom>
         Transactions By Date Range
       </Typography>
       <Typography variant="h6" color={"secondary"}>
-        <InfoOutlined /> Use this to retrive transactions by date range
+        <InfoOutlined /> Use this to retrieve transactions by date range
       </Typography>
 
       <Box mb={2}>
@@ -75,6 +87,27 @@ const TransactionsByDateRange = () => {
           onChange={(e) => setEndDate(e.target.value)}
           margin="normal"
         />
+        <FormControl component="fieldset">
+          <Typography variant="subtitle1" gutterBottom>
+            Filter by Return Status:
+          </Typography>
+          <RadioGroup
+            row
+            value={notreturned.toString()}
+            onChange={handleNotReturnedChange}
+          >
+            <FormControlLabel
+              value="false"
+              control={<Radio />}
+              label="All Transactions"
+            />
+            <FormControlLabel
+              value="true"
+              control={<Radio />}
+              label="Only Not Returned Yet"
+            />
+          </RadioGroup>
+        </FormControl>
       </Box>
 
       <Button
@@ -82,6 +115,7 @@ const TransactionsByDateRange = () => {
         disabled={loading}
         color="primary"
         onClick={() => handleFetchTransactions()}
+        sx={{ my: 2 }}
       >
         Fetch Transactions
       </Button>
@@ -99,13 +133,15 @@ const TransactionsByDateRange = () => {
           {booksIssued ? (
             booksIssued.length > 0 ? (
               <>
+                <Divider />
                 <Pagination
                   count={totalPages}
                   page={page}
                   onChange={handlePageChange}
                   color="primary"
-                  sx={{ mt: 3 }}
+                  sx={{ my: 2 }}
                 />
+                <Divider />
                 <Box mt={4}>
                   <Typography variant="h5" gutterBottom>
                     Books Issued:

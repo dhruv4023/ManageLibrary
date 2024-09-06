@@ -80,8 +80,9 @@ export const returnBook = async (req, res) => {
 
 
 // ---------
+
 export const getBooksIssuedInRange = async (req, res) => {
-    const { startDate, endDate, page = 1, limit = 10 } = req.query;
+    const { startDate, endDate, notreturned = "false", page = 1, limit = 10 } = req.query;
 
     try {
         const start = new Date(startDate);
@@ -94,15 +95,17 @@ export const getBooksIssuedInRange = async (req, res) => {
         // Get pagination metadata
         const { startIndex, endIndex } = getPaginationMetadata({ page, limit });
 
+        const query = (notreturned == "true") ? {
+            issuedAt: { $gte: start, $lte: end }, returnedAt: null
+        } : {
+            issuedAt: { $gte: start, $lte: end },
+        };
+        console.log(query)
         // Fetching total count for pagination
-        const totalCount = await Transactions.countDocuments({
-            issuedAt: { $gte: start, $lte: end }
-        });
+        const totalCount = await Transactions.countDocuments(query);
 
         // Fetching the paginated data
-        const transactions = await Transactions.find({
-            issuedAt: { $gte: start, $lte: end }
-        })
+        const transactions = await Transactions.find(query)
             .populate({
                 path: "userId",
                 select: ["firstName", "lastName"],
@@ -213,15 +216,15 @@ export const getTotalRentByBook = async (req, res) => {
 
 export const getBooksIssuedByUser = async (req, res) => {
     const { userId } = req.params;
-    const { page = 1, limit = 10 } = req.query; // Default to page 1, 10 results per page
+    const { page = 1, limit = 5 } = req.query;
 
     try {
         const user = await Users.findById(userId);
         if (!user) return RESPONSE.error(res, 1001, 400);
 
-        const totalTransactions = await Transactions.countDocuments({ userId: user._id });
+        const totalTransactions = await Transactions.countDocuments({ userId: user._id, returnedAt: null });
 
-        const transactions = await Transactions.find({ userId: new ObjectId(user._id) })
+        const transactions = await Transactions.find({ userId: new ObjectId(user._id), returnedAt: null })
             .populate({
                 path: "bookId",
                 select: ["bookName", "rentPerDay"],

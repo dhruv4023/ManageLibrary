@@ -22,7 +22,7 @@ import axios from "axios";
 import FlexBetween from "../../Components/FlexBetween";
 import MyButton from "../../Components/MyCompoenents/MyButton";
 import { fetchUsersApi } from "../Book/book.api";
-import { fetchBooksIssuedApi } from "./transactions.api";
+import { fetchBooksIssuedByUserApi } from "./transactions.api";
 import { InfoOutlined } from "@mui/icons-material";
 
 const TransactionsByUser = () => {
@@ -51,7 +51,7 @@ const TransactionsByUser = () => {
     try {
       setLoading2(true);
       const { booksIssued, currentPage, totalPages } =
-        await fetchBooksIssuedApi({ userId, page });
+        await fetchBooksIssuedByUserApi({ userId, page });
       setBookIssuedData(booksIssued);
       setCurrentPage(currentPage);
       setTotalPages(totalPages);
