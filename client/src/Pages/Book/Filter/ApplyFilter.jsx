@@ -8,12 +8,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setBookCategory, setBooks } from "../../../state";
 import FlexEvenly from "../../../Components/FlexEvenly";
 import FlexBetween from "../../../Components/FlexBetween";
 import MyTitle from "../../../Components/MyCompoenents/MyTitle";
+import { fetchCategories, fetchFilteredBooksApi } from "./bookFilter.api";
 
 const initialFilter = {
   name: null,
@@ -28,53 +27,22 @@ const ApplyFilter = ({ setBooksData, setLoading, booksData, loading }) => {
   const dispatch = useDispatch();
   const categories = useSelector((s) => s.bookCategory);
 
-  const fetchCategories = async () => {
-    try {
-      const config = {
-        method: "get",
-        url: "http://localhost:5000/api/book/categories",
-        headers: {},
-      };
-      const response = await axios.request(config);
-      dispatch(
-        setBookCategory({
-          bookCategory: response.data.categories,
-        })
-      );
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
   const fetchFilteredBooks = async (page = 1) => {
     try {
-      const queryParams = new URLSearchParams();
-      if (filter.name) queryParams.append("name", filter.name);
-      if (filter.category) queryParams.append("Category", filter.category);
-      if (filter.minRent) queryParams.append("minRent", filter.minRent);
-      if (filter.maxRent) queryParams.append("maxRent", filter.maxRent);
-      queryParams.append("page", page);
-
-      const config = {
-        method: "get",
-        url: `http://localhost:5000/api/book/search?${queryParams.toString()}`,
-      };
-
-      const response = await axios.request(config);
-
-      if (response.data) {
-        setBooksData(response.data.data.page_data);
-        dispatch(setBooks({ books: response.data.data.page_data }));
-        setPageMetadata(response.data.data.page_metadata);
-      } else {
-        setBooksData(null);
-      }
+      const { page_data, page_metadata } = await fetchFilteredBooksApi({
+        filter,
+        dispatch,
+        page,
+      });
+      setBooksData(page_data);
+      setPageMetadata(page_metadata);
     } catch (error) {
-      setBooksData(null);
+      console.log(error);
     }
   };
   useEffect(() => {
     setLoading(true);
-    if (categories == null) fetchCategories();
+    if (categories == null) fetchCategories({ dispatch });
     !booksData && fetchFilteredBooks();
     setLoading(false);
   }, []);

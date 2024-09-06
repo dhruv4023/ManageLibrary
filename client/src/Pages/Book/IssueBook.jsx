@@ -10,10 +10,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import Loading from "../../Components/Loading/Loading";
-import { issueBook } from "./book";
 import FlexEvenly from "../../Components/FlexEvenly";
+import { fetchUsersApi } from "./book.api.js";
+import { issueBookApi } from "./book.api.js";
 
 const IssueBook = ({
   setLoading,
@@ -30,10 +30,8 @@ const IssueBook = ({
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `http://localhost:5000/api/user/get/name/${name}`
-      );
-      setOptions(response.data.data.users || []); // Adjust based on your API response structure
+      const { users } = await fetchUsersApi({ name });
+      setOptions(users || []); // Adjust based on your API response structure
     } catch (error) {
       console.error(error);
     } finally {
@@ -57,10 +55,10 @@ const IssueBook = ({
     setName("");
     setOpenDialog(false);
   };
-  console.log(options);
+  
   const handleIssueBook = async () => {
     setLoading(true);
-    await issueBook({ bookId, userId: issuingTo }).then((d) =>
+    await issueBookApi({ bookId, userId: issuingTo }).then((d) =>
       setcurrentHolder({
         _id: issuingTo,
         fullName: options.filter((f) => f._id === issuingTo)[0].fullName,
@@ -78,7 +76,7 @@ const IssueBook = ({
           <Button
             sx={{ background: "blue", color: "black", fontWeight: 700 }}
             onClick={() => handleClickOpen()}
-          > 
+          >
             Issue This Book
           </Button>
           <Dialog open={openDialog} onClose={handleClose}>

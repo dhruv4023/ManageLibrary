@@ -21,6 +21,8 @@ import FlexEvenly from "../../Components/FlexEvenly";
 import axios from "axios";
 import FlexBetween from "../../Components/FlexBetween";
 import MyButton from "../../Components/MyCompoenents/MyButton";
+import { fetchUsersApi } from "../Book/book.api";
+import { fetchBooksIssuedApi } from "./transactions.api";
 
 const TransactionsByUser = () => {
   const [name, setName] = useState("");
@@ -34,10 +36,8 @@ const TransactionsByUser = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `http://localhost:5000/api/user/get/name/${name}`
-      );
-      setOptions(response.data.data.users || []);
+      const { users } = await fetchUsersApi({ name });
+      setOptions(users || []);
     } catch (error) {
       console.error(error);
     } finally {
@@ -46,18 +46,12 @@ const TransactionsByUser = () => {
   };
 
   const fetchBooksIssued = async (userId, page = 1) => {
-    let config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/api/transaction/books-issued/user/${userId}?page=${page}&limit=5`, // Limit set to 5
-      headers: {},
-    };
-
     try {
-      const response = await axios.request(config);
-      setBookIssuedData(response.data.data.booksIssued);
-      setCurrentPage(response.data.data.currentPage);
-      setTotalPages(response.data.data.totalPages);
+      const { booksIssued, currentPage, totalPages } =
+        await fetchBooksIssuedApi({ userId, page });
+      setBookIssuedData(booksIssued);
+      setCurrentPage(currentPage);
+      setTotalPages(totalPages);
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -183,7 +177,7 @@ const BookDataCard = ({
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/transaction/return",
+        `${process.env.REACT_APP_SERVER_API}/transaction/return`,
         {
           bookId,
           userId,

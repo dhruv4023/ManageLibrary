@@ -4,11 +4,12 @@ const MESSAGES = {
     // Transaction
     2000: "Transaction not found",
     2001: "Book already issued",
-    2002: "Book issue histry retrived",
+    2002: "Book issue history retrived",
     2003: "No active transaction found for this book",
     2004: "Invalid date range",
     2005: "Book returned",
     2006: "Rent calculated success",
+    2007:"Transaction data retrived",
     // Book
     3001: "Book not found",
 

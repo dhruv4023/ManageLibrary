@@ -6,7 +6,7 @@ export
             const config = {
                 method: 'get',
                 maxBodyLength: Infinity,
-                url: `http://localhost:5000/api/transaction/book-issuers/${bookId}`,
+                url: `${process.env.REACT_APP_SERVER_API}/transaction/book-issuers/${bookId}`,
                 headers: {}
             };
 
@@ -17,13 +17,19 @@ export
         }
     };
 
+export const fetchUsersApi = async ({ name }) => {
+    const response = await axios.get(
+        `${process.env.REACT_APP_SERVER_API}/user/get/name/${name}`
+    );
+    return { users: response.data.data.users };
+}
 
 
-export const issueBook = async (data) => {
+export const issueBookApi = async (data) => {
     const config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://localhost:5000/api/transaction/issue',
+        url: `${process.env.REACT_APP_SERVER_API}/transaction/issue`,
         headers: {
             'Content-Type': 'application/json'
         }

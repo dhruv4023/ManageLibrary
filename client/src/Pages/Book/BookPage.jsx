@@ -3,7 +3,7 @@ import WidgetsOnPage from "../../Components/WidgetsOnPage";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import WidgetWrapper from "../../Components/WidgetWrapper";
-import { fetchBookIssuers } from "./book";
+import { fetchBookIssuers } from "./book.api";
 import Loading from "../../Components/Loading/Loading";
 import { Box, Typography } from "@mui/material";
 import FlexBetween from "../../Components/FlexBetween";

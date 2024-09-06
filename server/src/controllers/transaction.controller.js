@@ -57,7 +57,7 @@ export const getBooksIssuedInRange = async (req, res) => {
         const paginatedResponse = getRecursivePaginatedResponse(booksIssued, page, limit, totalCount);
 
         // Sending the paginated response
-        return RESPONSE.success(res, 1001, paginatedResponse);
+        return RESPONSE.success(res, 2007, paginatedResponse);
     } catch (error) {
         console.error('Error fetching books issued in date range:', error);
         return RESPONSE.error(res, 9999, 500, error);
@@ -143,7 +143,7 @@ export const calculateRentByTransactionId = async (req, res) => {
         const transaction = await Transactions.findById(txnId).populate('bookId');
 
         if (!transaction) return RESPONSE.error(res, 2000, 400);
-     
+
         const rent = calculateRent(transaction.issuedAt, transaction.returnedAt, transaction.bookId.rentPerDay);
 
         return RESPONSE.success(res, 2006, { rent });

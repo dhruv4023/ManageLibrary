@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import {
   TextField,
   Button,
@@ -12,6 +11,7 @@ import {
   Pagination,
 } from "@mui/material";
 import WidgetWrapper from "../../Components/WidgetWrapper";
+import { handleFetchTransactionsApi } from "./transactions.api";
 
 const TransactionsByDateRange = () => {
   const [startDate, setStartDate] = useState("");
@@ -23,11 +23,13 @@ const TransactionsByDateRange = () => {
 
   const handleFetchTransactions = async (currentPage = 1) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/transaction/books-issued-range?startDate=${startDate}&endDate=${endDate}&page=${currentPage}&limit=10`
-      );
-      setBooksIssued(response.data.data.page_data);
-      setTotalPages(response.data.data.page_metadata.total_page);
+      const { page_data, total_page } = await handleFetchTransactionsApi({
+        currentPage,
+        startDate,
+        endDate,
+      });
+      setBooksIssued(page_data);
+      setTotalPages(total_page);
       setError("");
     } catch (err) {
       setError("Error fetching transactions. Please try again.");
@@ -81,7 +83,7 @@ const TransactionsByDateRange = () => {
         </Alert>
       )}
 
-      {booksIssued.length > 0 && (
+      {booksIssued.length > 0 ? (
         <Box mt={4}>
           <Typography variant="h5" gutterBottom>
             Books Issued:
@@ -114,6 +116,8 @@ const TransactionsByDateRange = () => {
             sx={{ mt: 3 }}
           />
         </Box>
+      ) : (
+        <Box>No data Found</Box>
       )}
     </WidgetWrapper>
   );
