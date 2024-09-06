@@ -1,68 +1,11 @@
 import db from '../models/index.js';
 import RESPONSE from '../helpers/response.helper.js';
-import isValidData from '../helpers/validation/data_validator.js';
 import { getRecursivePaginatedResponse, getPaginationMetadata } from '../helpers/pagination.helper.js';
 
 import moment from 'moment';
 import { getTotalRentByABook } from '../service/transaction.service.js';
+import { ObjectId } from 'mongodb';
 const { Transactions, Books, Users } = db;
-
-export const getBooksIssuedInRange = async (req, res) => {
-    const { startDate, endDate, page = 1, limit = 10 } = req.query;
-
-    try {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-
-        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-            return RESPONSE.error(res, 2004, 400);
-        }
-
-        // Get pagination metadata
-        const { startIndex, endIndex } = getPaginationMetadata({ page, limit });
-
-        // Fetching total count for pagination
-        const totalCount = await Transactions.countDocuments({
-            issuedAt: { $gte: start, $lte: end }
-        });
-
-        // Fetching the paginated data
-        const transactions = await Transactions.find({
-            issuedAt: { $gte: start, $lte: end }
-        })
-            .populate({
-                path: "userId",
-                select: ["firstName", "lastName"],
-                model: Users,
-            })
-            .populate({
-                path: "bookId",
-                select: "bookName",
-                model: Books,
-            })
-            .skip(startIndex)
-            .limit(parseInt(limit))
-            .exec();
-
-        // Formatting the response using the utility function
-        const booksIssued = transactions.map(txn => ({
-            bookId: txn.bookId._id,
-            bookName: txn.bookId.bookName,
-            issuedAt: txn.issuedAt,
-            returnedAt: txn.returnedAt,
-            userId: txn.userId._id,
-            fullName: txn.userId.firstName + " " + txn.userId.lastName,
-        }));
-
-        const paginatedResponse = getRecursivePaginatedResponse(booksIssued, page, limit, totalCount);
-
-        // Sending the paginated response
-        return RESPONSE.success(res, 2007, paginatedResponse);
-    } catch (error) {
-        console.error('Error fetching books issued in date range:', error);
-        return RESPONSE.error(res, 9999, 500, error);
-    }
-};
 
 export const issueBook = async (req, res) => {
     const { bookId, userId } = req.body;
@@ -135,6 +78,65 @@ export const returnBook = async (req, res) => {
     }
 };
 
+
+// ---------
+export const getBooksIssuedInRange = async (req, res) => {
+    const { startDate, endDate, page = 1, limit = 10 } = req.query;
+
+    try {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return RESPONSE.error(res, 2004, 400);
+        }
+
+        // Get pagination metadata
+        const { startIndex, endIndex } = getPaginationMetadata({ page, limit });
+
+        // Fetching total count for pagination
+        const totalCount = await Transactions.countDocuments({
+            issuedAt: { $gte: start, $lte: end }
+        });
+
+        // Fetching the paginated data
+        const transactions = await Transactions.find({
+            issuedAt: { $gte: start, $lte: end }
+        })
+            .populate({
+                path: "userId",
+                select: ["firstName", "lastName"],
+                model: Users,
+            })
+            .populate({
+                path: "bookId",
+                select: "bookName",
+                model: Books,
+            })
+            .skip(startIndex)
+            .limit(parseInt(limit))
+            .exec();
+
+        // Formatting the response using the utility function
+        const booksIssued = transactions.map(txn => ({
+            bookId: txn.bookId._id,
+            bookName: txn.bookId.bookName,
+            issuedAt: txn.issuedAt,
+            returnedAt: txn.returnedAt,
+            userId: txn.userId._id,
+            fullName: txn.userId.firstName + " " + txn.userId.lastName,
+        }));
+
+        const paginatedResponse = getRecursivePaginatedResponse(booksIssued, page, limit, totalCount);
+
+        // Sending the paginated response
+        return RESPONSE.success(res, 2007, paginatedResponse);
+    } catch (error) {
+        console.error('Error fetching books issued in date range:', error);
+        return RESPONSE.error(res, 9999, 500, error);
+    }
+};
+
 // Calculate rent by transaction ID function
 export const calculateRentByTransactionId = async (req, res) => {
     const { txnId } = req.params;
@@ -162,7 +164,7 @@ export const getBookIssuers = async (req, res) => {
         const book = await Books.findOne({ _id: bookId });
         if (!book) return RESPONSE.error(res, 3001, 400);
 
-        const transactions = await Transactions.find({ bookId: book._id }).populate({
+        const transactions = await Transactions.find({ bookId: new ObjectId(book._id) }).populate({
             path: "userId",
             select: ["firstName", "lastName"],
             model: Users,
@@ -173,13 +175,13 @@ export const getBookIssuers = async (req, res) => {
         })
             .exec();
 
-
         const issuers = transactions.filter(f => f.returnedAt != null).map(txn => ({
             userId: txn.userId._id,
             fullName: txn.userId.firstName + " " + txn.userId.lastName,
             issuedAt: txn.issuedAt,
             returnedAt: txn.returnedAt,
         }));
+
         const tmp = transactions.find(txn => !txn.returnedAt)?.userId;
         const currentHolder = tmp ? {
             userId: tmp._id,
@@ -219,7 +221,7 @@ export const getBooksIssuedByUser = async (req, res) => {
 
         const totalTransactions = await Transactions.countDocuments({ userId: user._id });
 
-        const transactions = await Transactions.find({ userId: user._id })
+        const transactions = await Transactions.find({ userId: new ObjectId(user._id) })
             .populate({
                 path: "bookId",
                 select: ["bookName", "rentPerDay"],

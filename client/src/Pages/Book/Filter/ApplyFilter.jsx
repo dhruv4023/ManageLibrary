@@ -13,6 +13,7 @@ import FlexEvenly from "../../../Components/FlexEvenly";
 import FlexBetween from "../../../Components/FlexBetween";
 import MyTitle from "../../../Components/MyCompoenents/MyTitle";
 import { fetchCategories, fetchFilteredBooksApi } from "./bookFilter.api";
+import { InfoOutlined } from "@mui/icons-material";
 
 const initialFilter = {
   name: null,
@@ -78,6 +79,10 @@ const ApplyFilter = ({ setBooksData, setLoading, booksData, loading }) => {
           }
         />
       </FlexEvenly>
+      <Typography variant="h6" color={"secondary"}>
+        <InfoOutlined /> Use this to apply filter on books
+      </Typography>
+
       <Box width={"100%"} padding={"1rem"}>
         <FlexEvenly flexDirection={"column"} flexWrap={"wrap"} gap={2}>
           <TextField

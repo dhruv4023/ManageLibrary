@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const fetchBookIssuers = async ({ bookId }) => {
+export const fetchBookIssuersApi = async ({ bookId }) => {
     try {
         const config = {
             method: 'get',

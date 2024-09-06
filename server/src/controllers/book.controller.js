@@ -1,6 +1,5 @@
 import db from '../models/index.js';
 import RESPONSE from '../helpers/response.helper.js';
-import isValidData from '../helpers/validation/data_validator.js';
 import { getPaginationMetadata, getRecursivePaginatedResponse } from '../helpers/pagination.helper.js';
 
 const { Books, Transactions } = db;

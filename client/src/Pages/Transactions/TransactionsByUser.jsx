@@ -23,6 +23,7 @@ import FlexBetween from "../../Components/FlexBetween";
 import MyButton from "../../Components/MyCompoenents/MyButton";
 import { fetchUsersApi } from "../Book/book.api";
 import { fetchBooksIssuedApi } from "./transactions.api";
+import { InfoOutlined } from "@mui/icons-material";
 
 const TransactionsByUser = () => {
   const [name, setName] = useState("");
@@ -79,6 +80,10 @@ const TransactionsByUser = () => {
   return (
     <WidgetWrapper>
       <Typography variant="h2">Transaction By User</Typography>
+      <Typography variant="h6" color={"secondary"}>
+        <InfoOutlined /> Use this to retrive transactions by user and also to
+        return the book
+      </Typography>
       <FlexBetween margin={2} flexDirection={"column"}>
         <TextField
           fullWidth

@@ -3,7 +3,7 @@ import WidgetsOnPage from "../../Components/WidgetsOnPage";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import WidgetWrapper from "../../Components/WidgetWrapper";
-import { fetchBookIssuers } from "./book.api";
+import { fetchBookIssuersApi } from "./book.api";
 import Loading from "../../Components/Loading/Loading";
 import { Box, Typography } from "@mui/material";
 import FlexBetween from "../../Components/FlexBetween";
@@ -20,8 +20,9 @@ const BookPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchBookIssuers({ bookId })
+    fetchBookIssuersApi({ bookId })
       .then((d) => {
+        console.log(d)
         setPastIssues(d.issuers);
         setcurrentHolder(d.currentHolder);
         setTotalRent(d?.totalRent ? d?.totalRent : 0);
@@ -29,6 +30,7 @@ const BookPage = () => {
       .catch(console.log)
       .finally(() => setLoading(false));
   }, [bookId]);
+
   return (
     <WidgetsOnPage
       title={currentBook.bookName}
@@ -71,7 +73,7 @@ const PastIssuer = ({ pastIssues, totalRent, loading }) => {
           <Loading />
         ) : pastIssues?.length > 0 ? (
           pastIssues.map((m) => {
-            <Box margin={1} padding={1}>
+            return <Box margin={1} padding={1}>
               {"=> " + m.fullName}
             </Box>;
           })

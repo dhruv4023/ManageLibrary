@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import db from '../models/index.js';
 import RESPONSE from '../helpers/response.helper.js';
-import isValidData from '../helpers/validation/data_validator.js';
 
 const { Users } = db;
 
