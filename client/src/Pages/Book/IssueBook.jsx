@@ -26,16 +26,16 @@ const IssueBook = ({
   const [name, setName] = useState("");
   const [options, setOptions] = useState([]);
   const [issuingTo, setIssuingTo] = useState(null);
-
+  const [loadingInsideDialog, setLoadingInsideDialog] = useState(false);
   const fetchUsers = async () => {
     try {
-      setLoading(true);
+      setLoadingInsideDialog(true);
       const { users } = await fetchUsersApi({ name });
       setOptions(users || []); // Adjust based on your API response structure
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      setLoadingInsideDialog(false);
     }
   };
 
@@ -55,16 +55,16 @@ const IssueBook = ({
     setName("");
     setOpenDialog(false);
   };
-  
+
   const handleIssueBook = async () => {
-    setLoading(true);
+    setLoadingInsideDialog(true);
     await issueBookApi({ bookId, userId: issuingTo }).then((d) =>
       setcurrentHolder({
         _id: issuingTo,
         fullName: options.filter((f) => f._id === issuingTo)[0].fullName,
       })
     );
-    setLoading(false);
+    setLoadingInsideDialog(false);
     setOpenDialog(false);
   };
   return (
@@ -88,10 +88,10 @@ const IssueBook = ({
                 label="Enter Name Here"
                 variant="outlined"
                 value={name}
-                disabled={loading}
+                disabled={loadingInsideDialog}
                 onChange={onNameChange}
               />
-              {loading ? (
+              {loadingInsideDialog ? (
                 <Loading />
               ) : (
                 <FlexEvenly padding={1} flexDirection={"column"} gap={1}>
@@ -114,12 +114,16 @@ const IssueBook = ({
               )}
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose} sx={{ color: "red" }}>
+              <Button
+                onClick={handleClose}
+                disabled={loadingInsideDialog}
+                sx={{ color: "red" }}
+              >
                 Cancel
               </Button>
               <Button
                 onClick={handleIssueBook}
-                disabled={loading}
+                disabled={loadingInsideDialog}
                 color="primary"
               >
                 Issue
