@@ -15,7 +15,7 @@ app.use(cors({ origin: JSON.parse(config.origin_url_list), credentials: true }))
 
 
 app.get("/", (req, res) => {
-  res.status(200).json("Authentication Server is running...");
+  res.status(200).json("Server is running...");
 });
 
 app.use('/api/', routes_v1);

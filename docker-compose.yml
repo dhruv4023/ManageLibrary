@@ -1,0 +1,27 @@
+services:
+  server:
+    build: ./server                    # Build context for the server
+    container_name: library-management-server
+    image: dhruv4023/library-management-server:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_URL=${DB_URL}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - .:/library-management-app       # Mount the entire project root
+      - /library-management-app/client  # Prevent server from overwriting client
+
+  client:
+    build: ./client                    # Build context for the client
+    container_name: library-management-client
+    image: dhruv4023/library-management-client:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    environment:
+      - REACT_APP_SERVER_API=${REACT_APP_SERVER_API}
+    volumes:
+      - .:/library-management-app       # Mount the entire project root
+      - /library-management-app/server  # Prevent client from overwriting server
