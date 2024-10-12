@@ -14,7 +14,6 @@ import FlexBetween from "../../../Components/FlexBetween";
 import MyTitle from "../../../Components/MyCompoenents/MyTitle";
 import { fetchCategories, fetchFilteredBooksApi } from "./bookFilter.api";
 import { InfoOutlined } from "@mui/icons-material";
-import Loading from "../../../Components/Loading/Loading";
 
 const initialFilter = {
   name: null,

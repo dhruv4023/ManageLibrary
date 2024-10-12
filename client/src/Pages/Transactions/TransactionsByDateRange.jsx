@@ -50,8 +50,10 @@ const TransactionsByDateRange = () => {
   };
 
   const handlePageChange = (event, value) => {
+    setLoading(true);
     setPage(value);
     handleFetchTransactions(value);
+    setLoading(false);
   };
 
   const handleNotReturnedChange = (event) => {
